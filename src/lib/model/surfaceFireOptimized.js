@@ -34,42 +34,34 @@ export default class FireSim {
     this.dag = this.sim.createDag('Optimized')
     this.store = new StorageNeat(this.dag)
     this.dag.setStorageClass(this.store)
-    // Step 2 - configure input choices and computational options
-    this.dag.configure(config);
     // Set display units
     Object.values({ ...inputNodes, ...outputNodes, ...fuelNodes }).forEach((item) => {
       this.dag
         .get(item.geneLabel)._variant
         .setDisplayUnits(item.units)
     });
-    // Step 3 - specify the fire behavior variables to be produced
-    // (See ./utils/BehavePlusAlphabeticalOrder.js for complete list of 1200+ names)
-    this.selected = [
-      'surface.weighted.fire.spreadRate',
-      'surface.primary.fuel.bed.dead.mineralDamping',
-      'surface.primary.fuel.bed.dead.moistureDamping',
-    ];
+  };
+
+  selectOutputs(outputs) {
+    this.selected = outputs
+    console.log('Outputs', outputs)
     this.dag.select(
       this.selected
     )
+    this.requiredConfig = this.dag
+        .requiredConfigNodes()
+        .map((node) => `${node.key()}`)
+    return this.requiredConfig
   }
 
-  inputs() {
-    let reqNodes = {};
-    this.dag.requiredInputNodes().forEach((node) => {
-      if (node.key().split(".")[0] === "site") {
-        reqNodes[node.key()] = inputNodes[node.key()];
-        reqNodes[node.key()].value = reqNodes[node.key()].value;
-      }
-    });
-    reqNodes[$rangeInput].value = [
-      reqNodes[$rangeInput].min,
-      reqNodes[$rangeInput].max,
-    ];
-    requiredInputs.set(reqNodes);
-  }
-
-
+  updateConfig(config) {
+    // Step 2 - configure input choices and computational options
+    console.log('Configuring')
+    this.dag.configure(config);
+    return this.dag.requiredInputNodes().map((node) => node.key())
+  };
+    // Set display units
+    // (See ./utils/BehavePlusAlphabeticalOrder.js for complete list of 1200+ names)
   run(inputs) {
     // If interested, request and display the active configuration settings
     console.log(
@@ -88,35 +80,13 @@ export default class FireSim {
     // NOTE: we need to bump up the run limit so we can stress test with a lot of inputs
     this.dag.setRunLimit(100000)
 
-    // Define an array of input values for each input variable
-    // 5 fuel models x 25 wind speeds x 20 dead moistures x 4 live moistures x 4 temperatures x 6 slopes
-    // yields 240,000 orthogonal input combinations, and therefore 240,000 sets of run results
-    // const fuel = ['gs1', 'sh3']
-    // const wind = []
-    // for (let i = 0; i < 5; i++) {
-    //   wind.push(i * 88)
-    // }
-    // const tl1h = []
-    // for (let i = 1; i <= 5; i++) {
-    //   tl1h.push(i * 0.01)
-    // }
-    // const mDead = [10, 15, 30]
-    // const mLive = [50]
-    // const slope = [5]
-    //
-    // Here we go!
-    // Step 5 - specify the values of the required inputs
-
     console.log(inputs)
+
     const inputsArray = []
     for (const [key, values] of Object.entries(inputs)) {
       inputsArray.push([key, this.arrayToNative(key, values)])
     }
  
-
-
-      
-
     this.dag.input(inputsArray)
       // ['surface.primary.fuel.model.catalogKey', fuel],
       // ['site.moisture.live.herb', herb],

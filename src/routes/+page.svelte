@@ -7,11 +7,11 @@
 	import MultiSelect from 'svelte-multiselect';
 	import UKFuels from '$lib/data/UKFuels.json';
 
-	// import Inputs from "$lib/components/Inputs.svelte";
+	import Inputs from "$lib/components/Inputs.svelte";
 	import { selectedOutputs } from '$lib/shared/stores/outputs.js';
 	// import { modelConfigValues, modelConfig } from '$lib/shared/stores/config.js';
-	import { modelConfigValues, requiredConfig, config, _inputs, _output } from '$lib/shared/stores/modelStore.js';
-	// import { siteInputs } from "$lib/shared/stores/inputs.js";
+	import { modelConfigValues, requiredConfig, config, requiredSiteInputs, _inputs, _output } from '$lib/shared/stores/modelStore.js';
+  import { siteInputs } from "$lib/shared/stores/inputs.js";
 	import { selectedFuels } from '$lib/shared/stores/fuels.js';
 	import { outputNodes } from '$lib/data/outputNodes.js';
 
@@ -51,6 +51,11 @@
 	$: console.log('Required config', $requiredConfig);
   $: console.log('model config values', $modelConfigValues)
   $: console.log('config array', $config)
+  $: console.log('requiredSiteInputs', $requiredSiteInputs)
+  $: console.log('outputs', [...$_output.entries()])
+
+
+
   // $: $requiredConfig.forEach((key) => {
   //   console.log(key)
   //   console.log($modelConfigValues[key]['options'])
@@ -61,7 +66,6 @@
 <div class="container h-full items-center space-y-8">
 	<section class="space-y-4">
 		<h2 class="h2">BehavePlus modelling system</h2>
-		<!-- Animated Logo -->
 		<!-- <div class="flex justify-center space-x-2"> -->
 		<!-- 	<MultiSelect -->
 		<!-- 		bind:selected={$selectedFuels} -->
@@ -85,7 +89,7 @@
     <section class="space-y-1">
 		<h3 class="h3 font-bold">Required config options:</h3>
 			{#each $requiredConfig as configKey}
-        <h5 class="h5 font-bold">{configKey}: {$modelConfigValues[configKey].value}}</h5>
+        <h5 class="h5 font-bold">{configKey}: {$modelConfigValues[configKey].value}</h5>
         <select class="select" bind:value={$modelConfigValues[configKey].value}>
           {#each $modelConfigValues[configKey].options as option}
             <option value={option}>{option}</option>
@@ -137,6 +141,11 @@
 			</div>
 		</div>
 	</section>
+    <section class="space-y-1">
+		<h3 class="h3 font-bold">Required site inputs:</h3>
+    <Inputs/>
+    </section>
+	
 </div>
 
 <style lang="postcss">

@@ -29,28 +29,39 @@ export const requiredInputs = derived(config, ($config) => {
   return requiredI
 })
 
-
-// Set startInputs
-const initKeys = [
-	'site.moisture.dead.category',
-	'site.moisture.live.category',
-	'site.slope.steepness.degrees',
-	'site.wind.speed.atMidflame'
-]
-
-const initSiteInputs = {}
-initKeys.forEach((item) => {
-	initSiteInputs[item] = inputNodes[item].value
+export const requiredSiteInputs = derived([requiredInputs, siteInputs], ([$requiredInputs, $siteInputs]) => {
+  const requiredSiteI = {}
+  $requiredInputs.forEach((input) => {
+    
+    const splitKey = input.split('.')
+    if (splitKey[0] === 'site') {
+      requiredSiteI[input] = $siteInputs[input].value
+    }
+  })
+  return requiredSiteI
 })
-
-export const startRequiredInputs = writable(initKeys)
-
-export const startInputs = writable(initSiteInputs)
-// export const requiredInputs = derived([])
-
-export const _inputs = derived([selectedFuelsInput, siteInputs],
-  ([$selectedFuelsInput, $siteInputs]) => {
-    const inputs = { ...$selectedFuelsInput, ...$siteInputs }
+//
+// // Set startInputs
+// const initKeys = [
+// 	'site.moisture.dead.category',
+// 	'site.moisture.live.category',
+// 	'site.slope.steepness.degrees',
+// 	'site.wind.speed.atMidflame'
+// ]
+//
+// const initSiteInputs = {}
+// initKeys.forEach((item) => {
+// 	initSiteInputs[item] = inputNodes[item].value
+// })
+//
+// export const startRequiredInputs = writable(initKeys)
+//
+// export const startInputs = writable(initSiteInputs)
+// // export const requiredInputs = derived([])
+//
+export const _inputs = derived([selectedFuelsInput, requiredSiteInputs],
+  ([$selectedFuelsInput, $requiredSiteInputs]) => {
+    const inputs = { ...$selectedFuelsInput, ...$requiredSiteInputs }
     return inputs
 })
 export const _output = derived(_inputs, ($_inputs) => {

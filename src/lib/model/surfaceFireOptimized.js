@@ -56,49 +56,19 @@ export default class FireSim {
 
   updateConfig(config) {
     // Step 2 - configure input choices and computational options
-    console.log('Configuring')
+    console.log('Configuring', config)
     this.dag.configure(config);
     return this.dag.requiredInputNodes().map((node) => node.key())
   };
     // Set display units
     // (See ./utils/BehavePlusAlphabeticalOrder.js for complete list of 1200+ names)
   run(inputs) {
-    // If interested, request and display the active configuration settings
-    console.log(
-      'The active configuration options are:',
-      this.dag
-        .requiredConfigNodes()
-        .map((node) => `${node.key()} = '${node.value()}'`)
-    )
-
-    // Step 4 - if interested, request and display the required inputs
-    console.log(
-      'Required inputs are:',
-      this.dag.requiredInputNodes().map((node) => node.key())
-    )
-
-    // NOTE: we need to bump up the run limit so we can stress test with a lot of inputs
     this.dag.setRunLimit(100000)
-
-    console.log(inputs)
-
     const inputsArray = []
     for (const [key, values] of Object.entries(inputs)) {
       inputsArray.push([key, this.arrayToNative(key, values)])
     }
- 
     this.dag.input(inputsArray)
-      // ['surface.primary.fuel.model.catalogKey', fuel],
-      // ['site.moisture.live.herb', herb],
-      // ['site.moisture.dead.category', mDead],
-      // ['site.moisture.live.category', mLive],
-      // ['site.moisture.dead.tl1h', tl1h],
-      // ['site.moisture.dead.tl10h', tl10h],
-      // ['site.moisture.dead.tl100h', tl100h],
-      // ['site.moisture.live.stem', stem],
-      // ['site.slope.steepness.degrees', slope],
-      // ['site.wind.speed.atMidflame', wind],
-   
     this.dag.run()
     let elapsed = Date.now() // start the elapsed timer
     const results = this.dag.run()
@@ -111,10 +81,6 @@ export default class FireSim {
         `Optimized: ${runs} runs required ${elapsed} ms (${rps} runs/s): ${results.message}`
       )
     )
-    this.selected.forEach((item) => {
-      const node = this.dag.get(item);
-      console.log(node.label(), '=', node.displayString())
-    })
     return this.store._valueMap
   }
 

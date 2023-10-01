@@ -119,7 +119,7 @@ export const modelConfigOptions = {
     `,
   },
   'configure.fire.weightingMethod': {
-    options: ['arithmetic', 'expected', 'harmonic'],
+    options: ['arithmetic', 'harmonic'],
     value: 'arithmetic',
     active: false,
     description: `Weighted fire spread rate of 2 surface fuel types is based on

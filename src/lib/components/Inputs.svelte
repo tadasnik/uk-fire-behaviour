@@ -3,6 +3,16 @@
 	import RangeSlider from 'svelte-range-slider-pips';
   import { siteInputs } from '$lib/shared/stores/inputs.js'
 	import { requiredSiteInputs } from '$lib/shared/stores/modelStore.js';
+
+  let timer;
+
+	function debounce_set(e, key) {
+		clearTimeout(timer);
+		timer = setTimeout(() => {
+			$siteInputs[key] = e.detail.values;
+		}, 100);
+	}
+
 </script>
 
 <Accordion>
@@ -38,7 +48,8 @@
 						min={$siteInputs[key].min}
 						max={$siteInputs[key].max}
 						step={$siteInputs[key].step}
-						bind:values={$siteInputs[key].value}
+						values={$siteInputs[key].value}
+            on:stop={(e, key) => {debounce_set(e, key)}}
 					/>
 				{/if}
 			</svelte:fragment>

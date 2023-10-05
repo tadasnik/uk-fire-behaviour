@@ -127,3 +127,5 @@ export const outputNodes = {
 			'Probability of mortality is the likelihood that a tree will be killed by a fire. The equation used to calculate probability of mortality depends on the mortality tree species. There are 13 mortality equations, which variously include bark thickness, tree crown length scorched and/or tree crown volume scorched. \nProbability of mortality can be interpreted as the probability of an individual tree dying, or it can be multiplied by the number of trees on a site to estimate the number of trees that will die.'
 	}
 }
+
+

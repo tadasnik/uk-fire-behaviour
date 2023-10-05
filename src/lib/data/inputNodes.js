@@ -268,3 +268,4 @@ export const inputNodes = {
 			'Foliar moisture is the moisture content of the overstory foliage: the conifer needles.'
 	}
 }
+

@@ -16,80 +16,84 @@
  * or 180,000 to 326,000 runs per second.
  */
 import { Sim } from '@cbevins/fire-behavior-simulator'
-import StorageNeat from "$lib/model/ResultsStore.js";
-import { config } from "$lib/model/Configuration.js";
-import { inputNodes, outputNodes, fuelNodes } from "$lib/data/nodeProps.js";
-
+import StorageNeat from '$lib/model/ResultsStore.js'
 
 function header(content) {
-  const dash =
-    '\n-----------------------------------------------------------------------\n'
-  return dash + content + dash
+	const dash = '\n-----------------------------------------------------------------------\n'
+	return dash + content + dash
 }
+function makeRange(origArray, noElements) {
+    const vMin = Math.min(origArray[0], origArray[1])
+    const vMax = Math.max(origArray[0], origArray[1])
+    const increments = ((vMax - vMin) / noElements)
+    const values = [...Array(noElements + 1)].map((_, y) => vMin + increments * y)
+    return values
+  };
+
 
 // Step 1 - create a fire behavior simulator with 1 directed acyclical graph (DAG)
 export default class FireSim {
-  constructor() {
-    this.sim = new Sim()
-    this.dag = this.sim.createDag('Optimized')
-    this.store = new StorageNeat(this.dag)
-    this.dag.setStorageClass(this.store)
-    // Set display units
-    Object.values({ ...inputNodes, ...outputNodes, ...fuelNodes }).forEach((item) => {
-      this.dag
-        .get(item.geneLabel)._variant
-        .setDisplayUnits(item.units)
-    });
-  };
+	constructor(nodeProps) {
+		this.sim = new Sim()
+		this.dag = this.sim.createDag('Optimized')
+		this.store = new StorageNeat(this.dag)
+		this.dag.setStorageClass(this.store)
+		// Set display units
+		for (const [key, values] of Object.entries(nodeProps)) {
+			this.dag.get(key)._variant.setDisplayUnits(values.units)
+		}
+	}
 
-  selectOutputs(outputs) {
-    this.selected = outputs
-    console.log('Outputs', outputs)
-    this.dag.select(
-      this.selected
-    )
-    this.requiredConfig = this.dag
-        .requiredConfigNodes()
-        .map((node) => `${node.key()}`)
-    return this.requiredConfig
-  }
+	selectOutputs(outputs) {
+		this.selected = outputs
+		console.log('Outputs', outputs)
+		this.dag.select(this.selected)
+		this.requiredConfig = this.dag.requiredConfigNodes().map((node) => `${node.key()}`)
+		return this.requiredConfig
+	}
 
-  updateConfig(config) {
-    // Step 2 - configure input choices and computational options
-    console.log('Configuring', config)
-    this.dag.configure(config);
-    return this.dag.requiredInputNodes().map((node) => node.key())
-  };
-    // Set display units
-    // (See ./utils/BehavePlusAlphabeticalOrder.js for complete list of 1200+ names)
-  run(inputs) {
-    this.dag.setRunLimit(100000)
-    const inputsArray = []
-    for (const [key, values] of Object.entries(inputs)) {
-      inputsArray.push([key, this.arrayToNative(key, values)])
-    }
-    this.dag.input(inputsArray)
-    this.dag.run()
-    let elapsed = Date.now() // start the elapsed timer
-    const results = this.dag.run()
-    elapsed = Date.now() - elapsed
+	updateConfig(config) {
+		// Step 2 - configure input choices and computational options
+		console.log('Configuring', config)
+		this.dag.configure(config)
+		return this.dag.requiredInputNodes().map((node) => node.key())
+	}
+	// Set display units
+	run(inputs) {
+		this.dag.setRunLimit(1000000)
+		const inputsArray = []
+		for (const [key, values] of Object.entries(inputs)) {
+      let valuesMod = [];
+      if (values.length === 2) {
+        console.log('here')
+        valuesMod = makeRange(values, 10)
+      } else if (values.length === 1) {
+        valuesMod = values
+      }
+			inputsArray.push([key, this.arrayToNative(key, valuesMod)])
+		}
+		this.dag.input(inputsArray)
+		this.dag.run()
+		let elapsed = Date.now() // start the elapsed timer
+		const results = this.dag.run()
+		elapsed = Date.now() - elapsed
 
-    const runs = results.runs
-    const rps = (runs / (0.001 * elapsed)).toFixed(0)
-    console.log(
-      header(
-        `Optimized: ${runs} runs required ${elapsed} ms (${rps} runs/s): ${results.message}`
-      )
-    )
-    return this.store._valueMap
-  }
+		const runs = results.runs
+		const rps = (runs / (0.001 * elapsed)).toFixed(0)
+		console.log(
+			header(`Optimized: ${runs} runs required ${elapsed} ms (${rps} runs/s): ${results.message}`)
+		)
+		const node = this.dag.get('surface.primary.fuel.model.behave.parms.dead.heatOfCombustion')
+		console.log('heatOfCombustion', node.displayValue() / 1000)
+		return this.store._valueMap
+	};
 
-  arrayToNative(key, values) {
-    const valuesNative = []
-    const node = this.dag.get(key)
-    values.forEach((element) => {
-      valuesNative.push(node._variant.displayValueToNativeValue(element))
-    })
-    return valuesNative
-  }
+	arrayToNative(key, values) {
+		const valuesNative = []
+		const node = this.dag.get(key)
+		values.forEach((element) => {
+			valuesNative.push(node._variant.displayValueToNativeValue(element))
+		})
+		return valuesNative
+	}
 }

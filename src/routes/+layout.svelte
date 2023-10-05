@@ -10,7 +10,7 @@
 <AppShell>
 	<svelte:fragment slot="header">
 		<!-- App Bar -->
-		<AppBar>
+		<AppBar background="bg-surface-100" padding="p-3" shadow="shadow-lg">
 			<svelte:fragment slot="lead">
         <strong
           class="bg-gradient-to-br from-success-500 to-error-900 bg-clip-text text-transparent box-decoration-clone font-bold text-3xl uppercase"

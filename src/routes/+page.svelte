@@ -1,25 +1,35 @@
 <script lang="ts">
-	import { InputChip, Autocomplete } from '@skeletonlabs/skeleton';
+	import { Autocomplete } from '@skeletonlabs/skeleton';
 	import type { AutocompleteOption } from '@skeletonlabs/skeleton';
 	import { ListBox, ListBoxItem } from '@skeletonlabs/skeleton';
 	import { popup } from '@skeletonlabs/skeleton';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
-	import MultiSelect from 'svelte-multiselect';
+	// import MultiSelect from 'svelte-multiselect';
 	import UKFuels from '$lib/data/UKFuels.json';
 
-	import Inputs from "$lib/components/Inputs.svelte";
+	import Inputs from '$lib/components/Inputs.svelte';
+	import InputForm from '$lib/components/inputForm.svelte';
+	import FuelForm from '$lib/components/fuelForm.svelte';
 	import { selectedOutputs } from '$lib/shared/stores/outputs.js';
 	// import { modelConfigValues, modelConfig } from '$lib/shared/stores/config.js';
-	import { modelConfigValues, requiredConfig, config, requiredSiteInputs, _inputs, _output } from '$lib/shared/stores/modelStore.js';
-  import { siteInputs } from "$lib/shared/stores/inputs.js";
-	import { selectedFuels } from '$lib/shared/stores/fuels.js';
+	import {
+		modelConfigValues,
+		requiredConfig,
+		config,
+		requiredSiteInputs,
+		siteInputs,
+		selectedFuels,
+		requiredFuelInputs,
+		fuelInputs,
+		_inputs,
+		_output
+	} from '$lib/shared/stores/modelStore.js';
 	import { outputNodes } from '$lib/data/outputNodes.js';
 
 	// const fSim = new FireSim();
 	// let res = fSim.run();
 	let color = 'red';
 	let fuelsChip = '';
-	let fuelsOptions: string[] = ['gs1', 'sh1', 'sh3', 'sh4', 'gr3'];
 	function section(c: string): void {
 		color = c;
 	}
@@ -42,28 +52,37 @@
 		// 	background: 'variant-filled-error'
 		// });
 	}
-	// $: console.log([...$_output.entries()]);
-	$: console.log([$requiredConfig]);
+	let comboboxValue: string;
+	const popupCombobox: PopupSettings = {
+		event: 'click',
+		target: 'popupCombobox',
+		closeQuery: '.listbox-item'
+	};
+
 	const selectOptions: AutocompleteOption<string>[] = [];
 	for (const [key, value] of Object.entries(UKFuels)) {
 		selectOptions.push({ label: value.label, value: key });
 	}
-	$: console.log('Required config', $requiredConfig);
-  $: console.log('model config values', $modelConfigValues)
-  $: console.log('config array', $config)
-  $: console.log('requiredSiteInputs', $requiredSiteInputs)
-  $: console.log('outputs', [...$_output.entries()])
 
+	// $: console.log('Required config', $requiredConfig);
+	//  $: console.log('config array', $config)
+	 // $: console.log('requiredSiteInputs', $requiredSiteInputs)
+	// $: console.log('fuelInputs', $fuelInputs['gs3']);
+	// $: console.log(
+	// 	'requiredFuelInputs',
+	// 	$requiredFuelInputs);
+	// $: console.log('fuelInputs', $fuelInputs);
+	// $: console.log('_inputs', $_inputs)
+	$: console.log('outputs', $_output['gr6'].get("Surface Weighted Fire Spread Rate"));
 
-
-  // $: $requiredConfig.forEach((key) => {
-  //   console.log(key)
-  //   console.log($modelConfigValues[key]['options'])
-  // })
+	// $: $requiredConfig.forEach((key) => {
+	//   console.log(key)
+	//   console.log($modelConfigValues[key]['options'])
+	// })
 </script>
 
 <!-- <div class="container h-full mx-auto flex justify-center items-center"> -->
-<div class="container h-full items-center space-y-8">
+<div class="container h-full items-center space-y-8 p-4">
 	<section class="space-y-4">
 		<h2 class="h2">BehavePlus modelling system</h2>
 		<!-- <div class="flex justify-center space-x-2"> -->
@@ -85,25 +104,25 @@
 				<option value={key}>{props.label}</option>
 			{/each}
 		</select>
-      </section>
-    <section class="space-y-1">
+	</section>
+	<section class="space-y-1">
 		<h3 class="h3 font-bold">Required config options:</h3>
-			{#each $requiredConfig as configKey}
-        <h5 class="h5 font-bold">{configKey}: {$modelConfigValues[configKey].value}</h5>
-        <select class="select" bind:value={$modelConfigValues[configKey].value}>
-          {#each $modelConfigValues[configKey].options as option}
-            <option value={option}>{option}</option>
-          {/each}
-        </select>
-      {/each}
-    </section>
-		<!-- <ListBox multiple> -->
-		<!--   {#each Object.entries(outputNodes) as [key, props]} -->
-		<!--     <ListBoxItem bind:group={$selectedOutputs} name="medium" value={key} -->
-		<!--       >{props.label}</ListBoxItem -->
-		<!--     > -->
-		<!--   {/each} -->
-		<!-- </ListBox> -->
+		{#each $requiredConfig as configKey}
+			<h5 class="h5 font-bold">{configKey}: {$modelConfigValues[configKey].value}</h5>
+			<select class="select" bind:value={$modelConfigValues[configKey].value}>
+				{#each $modelConfigValues[configKey].options as option}
+					<option value={option}>{option}</option>
+				{/each}
+			</select>
+		{/each}
+	</section>
+	<!-- <ListBox multiple> -->
+	<!--   {#each Object.entries(outputNodes) as [key, props]} -->
+	<!--     <ListBoxItem bind:group={$selectedOutputs} name="medium" value={key} -->
+	<!--       >{props.label}</ListBoxItem -->
+	<!--     > -->
+	<!--   {/each} -->
+	<!-- </ListBox> -->
 	<section class="space-y-4">
 		<div class="flex justify-center space-x-2">
 			{#each $selectedFuels as c}
@@ -126,7 +145,7 @@
 				placeholder="Filter and select fuels..."
 				use:popup={popupSettings}
 			/>
-			<InputChip bind:input={fuelsChip} bind:value={$selectedFuels} name="chips" />
+			<!-- <InputChip bind:input={fuelsChip} bind:value={$selectedFuels} name="chips" /> -->
 			<div
 				class="card w-full max-w-sm max-h-48 p-4 overflow-y-auto"
 				tabindex="-1"
@@ -141,11 +160,68 @@
 			</div>
 		</div>
 	</section>
-    <section class="space-y-1">
+
+	<section class="space-y-4">
+		<button class="btn variant-filled w-48 justify-between" use:popup={popupCombobox}>
+			<span class="capitalize">{comboboxValue ?? 'Trigger'}</span>
+			<i class="fa-solid fa-caret-down opacity-50" />
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				class="icon icon-tabler icon-tabler-caret-up"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				stroke-width="2"
+				stroke="currentColor"
+				fill="none"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			>
+				<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+				<path d="M18 14l-6 -6l-6 6h12" />
+			</svg>
+		</button>
+		<div class="card w-48 shadow-xl py-2" data-popup="popupCombobox">
+			<ListBox rounded="rounded-none">
+				<ListBoxItem bind:group={comboboxValue} name="medium" value="books">Books</ListBoxItem>
+				<ListBoxItem bind:group={comboboxValue} name="medium" value="movies">Movies</ListBoxItem>
+				<ListBoxItem bind:group={comboboxValue} name="medium" value="television">TV</ListBoxItem>
+			</ListBox>
+			<div class="arrow bg-surface-100-800-token" />
+		</div>
+	</section>
+	<section class="space-y-1">
 		<h3 class="h3 font-bold">Required site inputs:</h3>
-    <Inputs/>
-    </section>
-	
+		<InputForm />
+	</section>
+	{#each $selectedFuels as fuel}
+		<section class="space-y-1">
+			<h3 class="h3 font-bold">Required site inputs for {fuel}</h3>
+			<div class="flex flex-wrap">
+				{#each Object.keys($requiredFuelInputs[fuel]) as key}
+					{#if key === 'surface.primary.fuel.model.catalogKey'}
+						<p>{key}</p>
+					{:else}
+						<FuelForm fuel={fuel} key={key} />
+					{/if}
+				{/each}
+			</div>
+		</section>
+	{/each}
+	<section class="space-y-1">
+		<label class="label">
+			<span>Amount</span>
+			<div class="input-group input-group-divider grid-cols-[1fr_200px_1fr]">
+				<div class="input-group-shim"><i class="fa-solid fa-dollar-sign" /></div>
+				<input type="text" placeholder="Amount" />
+				<select>
+					<option>USD</option>
+					<option>CAD</option>
+					<option>EURO</option>
+				</select>
+			</div>
+		</label>
+	</section>
 </div>
 
 <style lang="postcss">

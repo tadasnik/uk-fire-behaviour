@@ -1,14 +1,14 @@
 <script>
   import { Accordion, AccordionItem, SlideToggle } from '@skeletonlabs/skeleton';
 	import RangeSlider from 'svelte-range-slider-pips';
-  import { siteInputs } from '$lib/shared/stores/inputs.js'
-	import { requiredSiteInputs } from '$lib/shared/stores/modelStore.js';
+	import { siteInputs, requiredSiteInputs } from '$lib/shared/stores/modelStore.js';
 
   let timer;
 
 	function debounce_set(e, key) {
 		clearTimeout(timer);
 		timer = setTimeout(() => {
+      console.log(e.detail, key)
 			$siteInputs[key] = e.detail.values;
 		}, 100);
 	}

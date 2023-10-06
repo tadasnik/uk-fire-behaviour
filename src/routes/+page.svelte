@@ -10,7 +10,6 @@
 	import Inputs from '$lib/components/Inputs.svelte';
 	import InputForm from '$lib/components/inputForm.svelte';
 	import FuelForm from '$lib/components/fuelForm.svelte';
-	// import { modelConfigValues, modelConfig } from '$lib/shared/stores/config.js';
 	import {
     selectedOutputs,
 		modelConfigValues,

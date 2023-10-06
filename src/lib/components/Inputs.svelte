@@ -8,7 +8,6 @@
 	function debounce_set(e, key) {
 		clearTimeout(timer);
 		timer = setTimeout(() => {
-      console.log(e.detail, key)
 			$siteInputs[key] = e.detail.values;
 		}, 100);
 	}

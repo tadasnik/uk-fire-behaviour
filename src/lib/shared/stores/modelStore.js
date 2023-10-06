@@ -31,7 +31,6 @@ export const config = derived(
 	[requiredConfig, modelConfigValues],
 	([$requiredConfig, $modelConfigValues]) => {
 		const configArray = []
-		console.log('derive config')
 		$requiredConfig.forEach((item) => {
 			configArray.push([item, $modelConfigValues[item].value])
 		})

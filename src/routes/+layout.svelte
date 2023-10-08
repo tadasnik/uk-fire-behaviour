@@ -1,21 +1,42 @@
 <script lang="ts">
 	import '../app.postcss';
 	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
-  import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
-  import { storePopup } from '@skeletonlabs/skeleton';
-  storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
+	import { initializeStores, Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
+	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
+	import { storePopup } from '@skeletonlabs/skeleton';
+	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
+
+	initializeStores();
+
+	const drawerStore = getDrawerStore();
+
+  function drawerOpen(): void {
+	drawerStore.open({});
+}
 </script>
 
+<Drawer>(contents)</Drawer>
 <!-- App Shell -->
-<AppShell>
+<AppShell slotSidebarLeft="bg-success-500/5 w-0 lg:w-96">
 	<svelte:fragment slot="header">
 		<!-- App Bar -->
 		<AppBar background="bg-surface-100" padding="p-3" shadow="shadow-lg">
 			<svelte:fragment slot="lead">
-        <strong
-          class="bg-gradient-to-br from-success-500 to-error-900 bg-clip-text text-transparent box-decoration-clone font-bold text-3xl uppercase"
-          >UKFDRS</strong
-        >
+				<div class="flex items-center">
+					<button class="lg:hidden btn btn-sm mr-4" on:click={drawerOpen}>
+						<span>
+							<svg viewBox="0 0 100 80" class="fill-token w-4 h-4">
+								<rect width="100" height="20" />
+								<rect y="30" width="100" height="20" />
+								<rect y="60" width="100" height="20" />
+							</svg>
+						</span>
+					</button>
+					<strong
+						class="bg-gradient-to-br from-success-500 to-error-900 bg-clip-text text-transparent box-decoration-clone font-bold text-3xl uppercase"
+						>UKFDRS</strong
+					>
+				</div>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
 				<a
@@ -28,6 +49,9 @@
 				</a>
 			</svelte:fragment>
 		</AppBar>
+	</svelte:fragment>
+	<svelte:fragment slot="sidebarLeft">
+		<p>Sidebar Working!</p>
 	</svelte:fragment>
 	<!-- Page Route Content -->
 	<slot />

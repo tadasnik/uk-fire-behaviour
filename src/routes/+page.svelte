@@ -19,6 +19,7 @@
 		siteInputs,
 		selectedFuels,
 		requiredFuelInputs,
+    requiredInputs,
 		fuelInputs,
 		_inputs,
 		_output
@@ -63,36 +64,37 @@
 		selectOptions.push({ label: value.label, value: key });
 	}
 
-	// $: console.log('Required config', $requiredConfig);
-	//  $: console.log('config array', $config)
-	 // $: console.log('requiredSiteInputs', $requiredSiteInputs)
-	// $: console.log('fuelInputs', $fuelInputs['gs3']);
-	// $: console.log(
-	// 	'requiredFuelInputs',
-	// 	$requiredFuelInputs);
-	// $: console.log('fuelInputs', $fuelInputs);
-	// $: console.log('_inputs', $_inputs)
-	$: console.log('outputs', $_output['gr6'].get("Surface Weighted Fire Spread Rate"));
+    $: console.log('Required config', $requiredConfig);
+    //  $: console.log('config array', $config)
+    // $: console.log('requiredSiteInputs', $requiredSiteInputs)
+    $: console.log('requiredInputs', $requiredInputs)
+    // $: console.log('fuelInputs', $fuelInputs['gs3']);
+    $: console.log(
+     	'requiredFuelInputs',
+    	$requiredFuelInputs);
+    // $: console.log('fuelInputs', $fuelInputs);
+    // $: console.log('_inputs', $_inputs)
+    $: console.log('outputs', $_output['gr6'].get("Surface Weighted Fire Spread Rate"));
 
-	// $: $requiredConfig.forEach((key) => {
-	//   console.log(key)
-	//   console.log($modelConfigValues[key]['options'])
-	// })
-</script>
+    // $: $requiredConfig.forEach((key) => {
+    //   console.log(key)
+    //   console.log($modelConfigValues[key]['options'])
+    // })
+  </script>
 
-<!-- <div class="container h-full mx-auto flex justify-center items-center"> -->
-<div class="container h-full items-center space-y-8 p-4">
-	<section class="space-y-4">
-		<h2 class="h2">BehavePlus modelling system</h2>
-		<!-- <div class="flex justify-center space-x-2"> -->
-		<!-- 	<MultiSelect -->
-		<!-- 		bind:selected={$selectedFuels} -->
-		<!-- 		options={[...Object.keys(UKFuels)]} -->
-		<!-- 		minSelect="1" -->
-		<!-- 		--sms-options-bg="red" -->
-		<!-- 	/> -->
-	</section>
-	<section class="space-y-1">
+  <!-- <div class="container h-full mx-auto flex justify-center items-center"> -->
+  <div class="container h-full items-center space-y-8 p-4">
+    <section class="space-y-4">
+      <h2 class="h2">BehavePlus modelling system</h2>
+      <!-- <div class="flex justify-center space-x-2"> -->
+      <!-- 	<MultiSelect -->
+      <!-- 		bind:selected={$selectedFuels} -->
+      <!-- 		options={[...Object.keys(UKFuels)]} -->
+      <!-- 		minSelect="1" -->
+      <!-- 		--sms-options-bg="red" -->
+      <!-- 	/> -->
+    </section>
+    <section class="space-y-1">
 		<h3 class="h3 font-bold">Selected model outputs:</h3>
 		<ul>
 			{#each $selectedOutputs as outputKey}

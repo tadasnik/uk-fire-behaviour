@@ -4,6 +4,7 @@
 	import { initializeStores, Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
+  import SiteInputs from '$lib/components/SiteInputs.svelte'
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
 	initializeStores();
@@ -15,12 +16,14 @@
 }
 </script>
 
-<Drawer>(contents)</Drawer>
+<Drawer>
+  <SiteInputs />
+</Drawer>
 <!-- App Shell -->
-<AppShell slotSidebarLeft="bg-success-500/5 w-0 lg:w-96">
+<AppShell slotSidebarLeft="bg-white w-0 lg:w-96">
 	<svelte:fragment slot="header">
 		<!-- App Bar -->
-		<AppBar background="bg-surface-100" padding="p-3" shadow="shadow-lg">
+		<AppBar background="bg-surface-900" padding="p-3" shadow="shadow-lg">
 			<svelte:fragment slot="lead">
 				<div class="flex items-center">
 					<button class="lg:hidden btn btn-sm mr-4" on:click={drawerOpen}>
@@ -51,7 +54,7 @@
 		</AppBar>
 	</svelte:fragment>
 	<svelte:fragment slot="sidebarLeft">
-		<p>Sidebar Working!</p>
+    <SiteInputs />
 	</svelte:fragment>
 	<!-- Page Route Content -->
 	<slot />

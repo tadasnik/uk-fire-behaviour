@@ -29,7 +29,7 @@
 <div class="flex flex-wrap">
 	{#each Object.keys($requiredSiteInputs) as key}
 		<div
-			class="max-w-sm p-1 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+			class="max-w-md p-1 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
 		>
 				<div class="flex flex-row gap-2">
 					<div class="basis-32 grow">

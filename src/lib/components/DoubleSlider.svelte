@@ -8,8 +8,9 @@
 	function clamp(num, min, max) {
 		return num < min ? min : num > max ? max : num;
 	}
-	export let start = 0;
-	export let end = 1;
+	export let start;
+	export let end;
+  $: console.log(start, end)
 	let leftHandle;
 	let body;
 	let slider;

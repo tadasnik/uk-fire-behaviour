@@ -44,7 +44,7 @@ export const modelConfigOptions = {
     `,
   },
   'configure.fuel.moisture': {
-    options: ['individual', 'liveCategory', 'category', 'catalog'],
+    options: ['individual', 'liveCategory', 'category'],
     value: 'category',
     active: false,
     description: `When required as input, fuel moisture is entered for
@@ -53,7 +53,6 @@ export const modelConfigOptions = {
     'liveCategory': the 3 dead moisture classes and a singe live category moisture
     'fosberg': calculated from temperature, humidity, slope, aspect, month, time
     'category': the dead and live category moistures only
-    'catalog' NOT IMPLEMENTED
     `,
   },
   'configure.slope.steepness': {

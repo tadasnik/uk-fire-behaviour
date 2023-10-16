@@ -1,7 +1,8 @@
 <script>
-	import { SlideToggle, RangeSlider } from '@skeletonlabs/skeleton';
-	// import RangeSlider from 'svelte-range-slider-pips';
-  import DoubleSlider from './DoubleSlider.svelte';
+	import { SlideToggle } from '@skeletonlabs/skeleton';
+	import RangeSlider from 'svelte-range-slider-pips';
+  // import DoubleSlider from './DoubleSlider.svelte';
+  // import Slider from './Slider.svelte';
 	import { siteInputs, requiredSiteInputs } from '$lib/shared/stores/modelStore.js';
 
 	let timer;
@@ -38,7 +39,7 @@
 		>
 			<div class="flex flex-row gap-1 items-center">
 				<div class="basis-32 grow h5">
-					<span>{$siteInputs[key].label} ({$siteInputs[key].units})</span>
+					<span>{$siteInputs[key].label} {$siteInputs[key].value[0]}({$siteInputs[key].units})</span>
 				</div>
 				<!-- <div class="basis-20"> -->
 				<!-- 	<input -->
@@ -76,23 +77,22 @@
 					<span>{$siteInputs[key].min}</span>
 				</div>
 				<div class="basis-32 grow">
-          {#if isRange(key)}
-            <DoubleSlider bind:start bind:end />
-          {:else}
-            <RangeSlider name={key} bind:value={$siteInputs[key].value[0]} max={25} step={1}>Label</RangeSlider>
-          {/if}
-
-					<!-- <RangeSlider -->
-					<!-- 	float -->
-					<!-- 	range={isRange(key)} -->
-					<!-- 	min={$siteInputs[key].min} -->
-					<!-- 	max={$siteInputs[key].max} -->
-					<!-- 	step={$siteInputs[key].step} -->
-					<!-- 	values={$siteInputs[key].value} -->
-					<!-- 	on:stop={(e, key) => { -->
-					<!-- 		debounce_set(e, key); -->
-					<!-- 	}} -->
-					<!-- /> -->
+          <!-- {#if isRange(key)} -->
+          <!--   <DoubleSlider bind:start={$siteInputs[key].value[0]} bind:end={$siteInputs[key].value[1]} /> -->
+          <!-- {:else} -->
+          <!--   <RangeSlider name={key} bind:value={$siteInputs[key].value[0]} max={25} step={1}></RangeSlider> -->
+          <!-- {/if} -->
+					<RangeSlider
+						float
+						range={isRange(key)}
+						min={$siteInputs[key].min}
+						max={$siteInputs[key].max}
+						step={$siteInputs[key].step}
+						values={$siteInputs[key].value}
+						on:stop={(e, key) => {
+							debounce_set(e, key);
+						}}
+					/>
 				</div>
 				<div class="basis-10 justify-start text-left">
 					<span>{$siteInputs[key].max}</span>

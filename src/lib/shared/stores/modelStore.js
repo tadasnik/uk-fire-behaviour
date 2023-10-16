@@ -9,14 +9,15 @@ import FireSim from '$lib/model/surfaceFireOptimized.js'
 export const fireSim = new FireSim({ ...inputNodes, ...fuelNodes, ...outputNodes })
 export const siteInputs = writable(inputNodes)
 export const selectedOutputs = writable(['surface.weighted.fire.spreadRate'])
-export const selectedFuels = writable(['gs3', 'gr6'])
+export const selectedFuels = writable(['sh6', 'sh4'])
+export const secondaryFuel = writable(['gr6'])
 
 const fuelProps = {}
 for (const [f_key, f_values] of Object.entries(UKFuels)) {
-  fuelProps[f_key] = {}
-  for (const [key, values] of Object.entries(fuelNodes)) {
-    fuelProps[f_key][key] = [f_values[values.catalogParam]]
-  }
+	fuelProps[f_key] = {}
+	for (const [key, values] of Object.entries(fuelNodes)) {
+		fuelProps[f_key][key] = [f_values[values.catalogParam]]
+	}
 }
 
 export const fuelInputs = writable(fuelProps)
@@ -51,26 +52,46 @@ export const requiredSiteInputs = derived(
 			const splitKey = input.split('.')
 			if (splitKey[0] === 'site') {
 				requiredSiteI[input] = $siteInputs[input].value
-			}
+			} else if (
+					splitKey[0] === 'surface' &&
+					splitKey[1] === 'weighted' &&
+					splitKey.at(-1) === 'primaryCover'
+				) {
+					requiredSiteI[input] = $siteInputs[input].value
+				} 
 		})
 		return requiredSiteI
 	}
 )
 
 export const requiredFuelInputs = derived(
-	[requiredInputs, selectedFuels, fuelInputs],
-	([$requiredInputs, $selectedFuels, $fuelInputs]) => {
+	[requiredInputs, selectedFuels, secondaryFuel, fuelInputs],
+	([$requiredInputs, $selectedFuels, $secondaryFuel, $fuelInputs]) => {
 		const requiredFuelI = {}
-    $selectedFuels.forEach((fuel) => {
-      requiredFuelI[fuel] = {}
-      $requiredInputs.forEach((input) => {
-        const splitKey = input.split('.')
-        if (splitKey[0] === 'surface' && splitKey.at(-1) === 'catalogKey') {
-          requiredFuelI[fuel][input] = [fuel]
-        } else if (splitKey[0] === 'surface') {
-					requiredFuelI[fuel][input] = $fuelInputs[fuel][input]
-				}
-			})
+		$selectedFuels.forEach((fuel) => {
+			requiredFuelI[fuel] = {}
+			$requiredInputs.forEach((input) => {
+        console.log(fuel, input)
+				const splitKey = input.split('.')
+				if (
+					splitKey[0] === 'surface' &&
+					splitKey[1] === 'primary' &&
+					splitKey.at(-1) === 'catalogKey'
+				) {
+					requiredFuelI[fuel][input] = [fuel]
+				} else if (
+					splitKey[0] === 'surface' &&
+					splitKey[1] === 'secondary' &&
+					splitKey.at(-1) === 'catalogKey'
+				) {
+					requiredFuelI[fuel][input] = $secondaryFuel
+        } else if (
+          splitKey[1] === 'primary' &&
+          splitKey[4] === 'behave'
+        ) {
+          requiredFuelI[fuel][input] = $fuelInputs[fuel][input]
+        }
+      })
 		})
 		return requiredFuelI
 	}
@@ -79,10 +100,9 @@ export const _inputs = derived(
 	[selectedFuels, requiredFuelInputs, requiredSiteInputs],
 	([$selectedFuels, $requiredFuelInputs, $requiredSiteInputs]) => {
 		const inputs = {}
-    $selectedFuels.forEach((fuel) => {
-      inputs[fuel] = { ...$requiredFuelInputs[fuel], ...$requiredSiteInputs }
-		}
-    )
+		$selectedFuels.forEach((fuel) => {
+			inputs[fuel] = { ...$requiredFuelInputs[fuel], ...$requiredSiteInputs }
+		})
 		return inputs
 	}
 )
@@ -104,9 +124,9 @@ export const _inputs = derived(
 // })
 
 export const _output = derived([selectedFuels, _inputs], ([$selectedFuels, $_inputs]) => {
-  const output = {}
-  $selectedFuels.forEach((fuel) => {
-	  output[fuel] = fireSim.run($_inputs[fuel])
-  })
+	const output = {}
+	$selectedFuels.forEach((fuel) => {
+		output[fuel] = fireSim.run($_inputs[fuel])
+	})
 	return output
 })

@@ -266,6 +266,20 @@ export const inputNodes = {
 		step: 1,
 		description:
 			'Foliar moisture is the moisture content of the overstory foliage: the conifer needles.'
-	}
+	},
+
+	'surface.weighted.fire.primaryCover': {
+		geneLabel: 'surface.weighted.fire.primaryCover',
+		label: 'Primary fuel percent',
+		code: 'FuelCoverFraction',
+		units: '%',
+		selected: true,
+		defValue: 50,
+		value: [50],
+		decimals: 0,
+		max: 100,
+		min: 0,
+		step: 1
+	},
 }
 

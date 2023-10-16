@@ -7,7 +7,7 @@
 	// import MultiSelect from 'svelte-multiselect';
 	import UKFuels from '$lib/data/UKFuels.json';
 
-	import Inputs from '$lib/components/Inputs.svelte';
+	// import Inputs from '$lib/components/Inputs.svelte';
 	import InputForm from '$lib/components/inputForm.svelte';
 	import FuelForm from '$lib/components/fuelForm.svelte';
 	import {
@@ -65,8 +65,8 @@
 	}
 
     $: console.log('Required config', $requiredConfig);
-    //  $: console.log('config array', $config)
-    // $: console.log('requiredSiteInputs', $requiredSiteInputs)
+    $: console.log('selectedFuels', $selectedFuels)
+    $: console.log('requiredSiteInputs', $requiredSiteInputs)
     $: console.log('requiredInputs', $requiredInputs)
     // $: console.log('fuelInputs', $fuelInputs['gs3']);
     $: console.log(
@@ -74,7 +74,7 @@
     	$requiredFuelInputs);
     // $: console.log('fuelInputs', $fuelInputs);
     // $: console.log('_inputs', $_inputs)
-    $: console.log('outputs', $_output['gr6'].get("Surface Weighted Fire Spread Rate"));
+    $: console.log('outputs', $_output[$selectedFuels[0]].get("Surface Weighted Fire Spread Rate"));
 
     // $: $requiredConfig.forEach((key) => {
     //   console.log(key)
@@ -200,7 +200,7 @@
 			<h3 class="h3 font-bold">Required site inputs for {fuel}</h3>
 			<div class="flex flex-wrap">
 				{#each Object.keys($requiredFuelInputs[fuel]) as key}
-					{#if key === 'surface.primary.fuel.model.catalogKey'}
+					{#if key === 'surface.primary.fuel.model.catalogKey' | key === 'surface.secondary.fuel.model.catalogKey'}
 						<p>{key}</p>
 					{:else}
 						<FuelForm fuel={fuel} key={key} />

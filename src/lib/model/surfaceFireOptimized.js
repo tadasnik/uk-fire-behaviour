@@ -42,6 +42,7 @@ export default class FireSim {
 		for (const [key, values] of Object.entries(nodeProps)) {
 			this.dag.get(key)._variant.setDisplayUnits(values.units)
 		}
+    console.log(this.dag.get('surface.weighted.fire.primaryCover'))
 	}
 
 	selectOutputs(outputs) {
@@ -54,8 +55,8 @@ export default class FireSim {
 
 	updateConfig(config) {
 		// Step 2 - configure input choices and computational options
-		console.log('Configuring', config)
 		this.dag.configure(config)
+		console.log('Configuring', config)
 		return this.dag.requiredInputNodes().map((node) => node.key())
 	}
 	// Set display units
@@ -63,6 +64,7 @@ export default class FireSim {
 		this.dag.setRunLimit(1000000)
 		const inputsArray = []
 		for (const [key, values] of Object.entries(inputs)) {
+      console.log(key)
       let valuesMod = [];
       if (values.length === 2) {
         console.log('here')

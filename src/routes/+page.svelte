@@ -25,6 +25,7 @@
 		_output
 	} from '$lib/shared/stores/modelStore.js';
 	import { outputNodes } from '$lib/data/outputNodes.js';
+  import MultiLinePage from '$lib/components/visual/MultiLinePage.svelte';
 
 	// const fSim = new FireSim();
 	// let res = fSim.run();
@@ -223,6 +224,9 @@
 			</div>
 		</label>
 	</section>
+	<section class="space-y-1">
+    <MultiLinePage></MultiLinePage>
+    </section>
 </div>
 
 <style lang="postcss">
